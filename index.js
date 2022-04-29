@@ -4,6 +4,9 @@ const http = require("http");
 const dotenv = require("dotenv");
 const connectToDb = require("./config/db");
 
+// API routes
+const userRouter = require("./routes/api/user.js");
+
 // Initizalization
 const app = express();
 const server = http.createServer(app);
@@ -18,10 +21,7 @@ connectToDb();
 const PORT = process.env.PORT || 5000;
 
 // express
-
-app.get("/", (req, res) => {
-	res.send("<h1>Hello world</h1>");
-});
+app.use("/users", userRouter);
 
 server.listen(PORT, () => {
 	console.log(`[Server] listening for requests: http://localhost:${PORT}`);
