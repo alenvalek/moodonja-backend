@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const http = require("http");
 const dotenv = require("dotenv");
+const connectToDb = require("./config/db");
 
 // Initizalization
 const app = express();
@@ -12,6 +13,7 @@ const io = require("socket.io")(server, { cors: { origin: "*" } });
 dotenv.config({ path: "./config/.env" });
 app.use(express.json({ extended: false }));
 app.use(cors());
+connectToDb();
 
 const PORT = process.env.PORT || 5000;
 
@@ -26,7 +28,6 @@ server.listen(PORT, () => {
 });
 
 // sockets
-
 io.on("connection", (socket) => {
 	console.log("a user connected");
 });
