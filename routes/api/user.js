@@ -26,7 +26,7 @@ userRouter.get("/", async (req, res) => {
 // @route POST api/users
 // @description Registracija novih korisnika
 // @access Public
-// @middleware - express-validator za validaciju maila, imena i lozinke
+// @middleware - express-validator za validaciju maila, username-a i lozinke
 
 userRouter.post(
 	"/",
