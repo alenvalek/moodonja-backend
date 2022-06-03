@@ -31,18 +31,15 @@ userRouter.get("/", async (req, res) => {
 userRouter.post(
 	"/",
 	[
+		check("username", "Korisničko ime je nužno.").notEmpty(),
 		check(
 			"username",
-			"Username is required and has to be at least 5 characters long"
-		)
-			.not()
-			.isEmpty()
-			.isLength({ min: 5 }),
-		check("email", "Please include a valid email adress.").isEmail(),
-		check(
-			"password",
-			"Please enter a password at least 6 characters long"
-		).isLength({ min: 6 }),
+			"Korisničko ime mora biti dugačko bar 5 znakova."
+		).isLength({ min: 5 }),
+		check("email", "Unesite valjanu e-mail adresu.").isEmail(),
+		check("password", "Unesite lozinku koja sadrži bar 6 znakova.").isLength({
+			min: 6,
+		}),
 	],
 	async (req, res) => {
 		console.log("getting request..");
@@ -63,7 +60,7 @@ userRouter.post(
 			if (user) {
 				return res
 					.status(400)
-					.json([{ msg: "Provided email is already in use." }]);
+					.json([{ msg: "Unesen je email koji se već koristi." }]);
 			}
 
 			// heširanje lozinke
@@ -77,7 +74,22 @@ userRouter.post(
 			});
 
 			await user.save();
-			res.json(user);
+
+			const payload = {
+				uid: user.id,
+			};
+
+			jwt.sign(
+				payload,
+				process.env.JWT_SECRET,
+				{
+					expiresIn: "1 week",
+				},
+				(err, token) => {
+					if (err) throw err;
+					res.json({ token });
+				}
+			);
 		} catch (error) {
 			console.log(error.message);
 			res.status(500).send("Server Error");
