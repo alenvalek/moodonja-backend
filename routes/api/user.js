@@ -63,6 +63,14 @@ userRouter.post(
 					.json([{ msg: "Unesen je email koji se već koristi." }]);
 			}
 
+			user = await User.findOne({ username });
+
+			if (user) {
+				return res
+					.status(400)
+					.json([{ msg: "Unesen je username koji se već koristi." }]);
+			}
+
 			// heširanje lozinke
 			const salt = await bcrypt.genSalt(10);
 			const hashedPassword = await bcrypt.hash(password, salt);

@@ -16,8 +16,6 @@ const authRouter = express.Router();
 // @access Protected
 
 authRouter.get("/", auth, async (req, res) => {
-	console.log("user token: ", req.user.uid);
-
 	try {
 		// fetch user data and exclude password
 		const user = await User.findById(req.user.uid);
@@ -57,7 +55,7 @@ authRouter.post(
 			let isPasswordMatching = await bcrypt.compare(password, user.password);
 
 			if (!isPasswordMatching) {
-				return res.status(400).json({ errors: [{ msg: "Pogrešni podaci." }] });
+				return res.status(400).json({ errors: [{ msg: "Pogrešna lozinka." }] });
 			}
 
 			const payload = {

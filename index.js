@@ -8,6 +8,7 @@ const { Server } = require("socket.io");
 // API routes
 const userRouter = require("./routes/api/user.js");
 const authRouter = require("./routes/api/auth.js");
+const postsRouter = require("./routes/api/post.js");
 
 // Initizalization
 const app = express();
@@ -25,6 +26,7 @@ const PORT = process.env.PORT || 5000;
 // express
 app.use("/users", userRouter);
 app.use("/auth", authRouter);
+app.use("/posts", postsRouter);
 
 // sockets
 io.on("connection", (socket) => {
