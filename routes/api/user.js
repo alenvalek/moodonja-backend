@@ -4,6 +4,7 @@ const User = require("../../models/User.js");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
+const auth = require("../../middleware/auth");
 
 dotenv.config({ path: "../../config/.env" });
 
@@ -104,5 +105,30 @@ userRouter.post(
 		}
 	}
 );
+
+// @route PATCH api/users
+// @description Update podataka
+// @access Protected
+
+userRouter.patch("/", [auth], async (req, res) => {
+	const { username, bio, photoURL } = req.body;
+	try {
+		const user = await User.findOne({ _id: req.user.uid });
+
+		if (!user) {
+			return res.status(401).json({ msg: "Korisnik ne postoji." });
+		}
+
+		if (username) user.username = username;
+		if (bio) user.bio = bio;
+		if (photoURL) user.photoURL = photoURL;
+
+		await user.save();
+		res.json(user);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send("Server Error");
+	}
+});
 
 module.exports = userRouter;

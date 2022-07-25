@@ -39,8 +39,18 @@ postsRouter.post("/", [auth], async (req, res) => {
 // TODO: samo postova prijatelja
 
 postsRouter.get("/", [auth], async (req, res) => {
-	const posts = await Post.find({}).populate("author").sort({ createdAt: -1 });
-	res.json(posts);
+	try {
+		const allPosts = await Post.find({}).populate("author");
+		const friendPosts = allPosts.filter(
+			(post) =>
+				post.author.friends.includes(req.user.uid) ||
+				post.author._id.toString() === req.user.uid
+		);
+		res.status(200).json(friendPosts);
+	} catch (error) {
+		console.log(error);
+		res.status(500).send("Server Error");
+	}
 });
 
 // @route GET api/posts/:id
