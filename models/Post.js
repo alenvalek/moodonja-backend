@@ -30,6 +30,12 @@ const postSchema = new mongoose.Schema(
 					ref: "user",
 					required: true,
 				},
+
+				createdAt: {
+					type: Date,
+					required: true,
+					default: Date.now,
+				},
 				body: {
 					type: String,
 					required: true,

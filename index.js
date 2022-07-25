@@ -35,6 +35,9 @@ let avaliableUsers = [];
 io.on("connection", (socket) => {
 	socket.on("disconnect", () => {
 		console.log("user:", socket.id, "left");
+		avaliableUsers = avaliableUsers.filter(
+			(user) => user.socketID !== socket.id
+		);
 	});
 
 	socket.on("send-msg", (data) => {
@@ -67,7 +70,6 @@ io.on("connection", (socket) => {
 		}, 5000);
 	});
 	socket.on("private-chat-send", (data) => {
-		console.log(data);
 		socket
 			.to(data.socketID)
 			.emit("private-chat-receive", { body: data.body, user: data.userID });
