@@ -9,6 +9,7 @@ const { Server } = require("socket.io");
 const userRouter = require("./routes/api/user.js");
 const authRouter = require("./routes/api/auth.js");
 const postsRouter = require("./routes/api/post.js");
+const User = require("./models/User");
 
 // Initizalization
 const app = express();
@@ -73,6 +74,21 @@ io.on("connection", (socket) => {
 		socket
 			.to(data.socketID)
 			.emit("private-chat-receive", { body: data.body, user: data.userID });
+	});
+
+	socket.on("send-friend-request", (data) => {
+		console.log(data);
+		socket.to(data.socketID).emit("receive-friend-request");
+	});
+
+	socket.on("accept-friend-request", async (data) => {
+		let userMe = await User.findOne({ _id: data.userID });
+		let userYou = await User.findOne({ _id: data.recepientUserID });
+		userMe.friends.push(data.recepientUserID);
+		userYou.friends.push(data.userID);
+		await userMe.save();
+		await userYou.save();
+		socket.to(data.socketID).emit("accepted-friend-request");
 	});
 
 	socket.on("private-chat-disconnect", (data) => {

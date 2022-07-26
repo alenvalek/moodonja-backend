@@ -212,6 +212,7 @@ postsRouter.delete("/comment/:id/:comment_id", [auth], async (req, res) => {
 
 		const location = post.postComments.indexOf(comment);
 		post.postComments.splice(location, 1);
+		Post.populate(post, ["author", "postComments.user"]);
 		await post.save();
 		res.json(post);
 	} catch (error) {
