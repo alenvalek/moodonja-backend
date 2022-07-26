@@ -61,7 +61,7 @@ postsRouter.patch("/:id", [auth], async (req, res) => {
 
 postsRouter.get("/", [auth], async (req, res) => {
 	try {
-		const allPosts = await Post.find({}).populate("author");
+		const allPosts = await Post.find({}).populate("author").sort("-createdAt");
 		const friendPosts = allPosts.filter(
 			(post) =>
 				post.author.friends.includes(req.user.uid) ||
@@ -96,6 +96,10 @@ postsRouter.get("/:id", [auth], async (req, res) => {
 		if (!isAuthorFriend) {
 			return res.status(400).json({ msg: "Not your friend" });
 		}
+
+		post.postComments.sort(
+			(a, b) => new Date(a.createdAt) < new Date(b.createdAt)
+		);
 
 		return res.json(post);
 	} catch (error) {
